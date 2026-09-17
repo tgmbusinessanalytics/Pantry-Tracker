@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>TGM Office Pantry</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,500..800&family=Figtree:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+:root{
+  --bg:#F3F4F1; --panel:#FFFFFF; --panel2:#ECEEE9; --ink:#1B211E; --muted:#5F6862; --line:#D9DDD6;
+  --accent:#2C4FA3; --accent-ink:#FFFFFF; --accent-soft:#E3E9F7;
+  --good:#1F7A4D; --good-soft:#DDF0E5; --warn:#A86500; --warn-soft:#FBEBD0; --bad:#B42F2F; --bad-soft:#F8DEDC;
+  --display:"Archivo","Arial Narrow",system-ui,sans-serif;
+  --body:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#131715; --panel:#1B201D; --panel2:#232925; --ink:#E7EBE8; --muted:#9AA39D; --line:#323A35;
+    --accent:#86A5F0; --accent-ink:#0F1A33; --accent-soft:#1F2A45;
+    --good:#5CC48E; --good-soft:#15301F; --warn:#E8A94A; --warn-soft:#352711; --bad:#EE7C74; --bad-soft:#3A1A18;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#131715; --panel:#1B201D; --panel2:#232925; --ink:#E7EBE8; --muted:#9AA39D; --line:#323A35;
+  --accent:#86A5F0; --accent-ink:#0F1A33; --accent-soft:#1F2A45;
+  --good:#5CC48E; --good-soft:#15301F; --warn:#E8A94A; --warn-soft:#352711; --bad:#EE7C74; --bad-soft:#3A1A18;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 var(--body);padding-inline:16px;padding-block:0 48px}
+.wrap{max-width:960px;margin:0 auto}
+header.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px;padding-block:22px 14px}
+h1{font-family:var(--display);font-stretch:80%;font-weight:800;font-size:30px;line-height:1;margin:0}
+h1 small{display:block;font-family:var(--body);font-stretch:100%;font-weight:500;font-size:13px;color:var(--muted);margin-top:6px}
+h2{font-family:var(--display);font-stretch:85%;font-weight:700;font-size:19px;margin:0 0 10px}
+h3{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:0 0 6px;font-weight:600}
+select,input,button{font:inherit;color:inherit}
+select,input[type=text],input[type=number],input[type=date]{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:7px 9px;min-width:0}
+input[type=number]{font-family:var(--mono);font-size:14px}
+button{cursor:pointer;border-radius:6px;border:1px solid var(--line);background:var(--panel);padding:7px 12px;font-weight:600}
+button.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+button.ghost{background:transparent;border-color:transparent;color:var(--muted);padding:4px 8px}
+button.danger{color:var(--bad)}
+button:disabled{opacity:.6}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+nav.tabs{display:flex;gap:2px;overflow-x:auto;border-bottom:1px solid var(--line);margin-bottom:18px;position:sticky;top:env(safe-area-inset-top,0px);background:var(--bg);z-index:5}
+nav.tabs button{border:0;background:none;border-bottom:3px solid transparent;border-radius:0;padding:10px 14px;color:var(--muted);white-space:nowrap}
+nav.tabs button[aria-selected=true]{color:var(--ink);border-bottom-color:var(--accent)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin-bottom:16px}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 14px}
+.kpi .v{font-family:var(--display);font-stretch:80%;font-weight:700;font-size:28px;line-height:1.1;font-variant-numeric:tabular-nums}
+.kpi .s{font-size:12.5px;color:var(--muted)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:14px 16px;min-width:0}
+.tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th{text-align:left;font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600;padding:6px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:middle}
+tr:last-child td{border-bottom:0}
+td.n,th.n{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+tr.cat td{background:var(--panel2);font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600;padding:5px 8px}
+.pill{display:inline-block;font-size:11.5px;font-weight:600;padding:2px 8px;border-radius:99px;white-space:nowrap}
+.p-bad{background:var(--bad-soft);color:var(--bad)} .p-warn{background:var(--warn-soft);color:var(--warn)} .p-good{background:var(--good-soft);color:var(--good)} .p-acc{background:var(--accent-soft);color:var(--accent)}
+.meter{width:70px;height:6px;background:var(--panel2);border-radius:3px;overflow:hidden;display:inline-block;vertical-align:middle}
+.meter i{display:block;height:100%}
+.muted{color:var(--muted)} .small{font-size:12.5px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end}
+label.f{display:flex;flex-direction:column;gap:4px;font-size:12.5px;color:var(--muted);font-weight:500}
+.lines{display:flex;flex-direction:column;gap:8px;margin:12px 0}
+.line{display:grid;grid-template-columns:minmax(0,2.2fr) minmax(70px,.8fr) minmax(100px,1fr) auto;gap:8px;align-items:center}
+@media (max-width:520px){.line{grid-template-columns:1fr 1fr auto}.line select{grid-column:1/-1}}
+.note{border-left:3px solid var(--accent);background:var(--accent-soft);padding:10px 12px;border-radius:0 6px 6px 0;font-size:13.5px;margin-bottom:14px}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:7px;font-weight:600;z-index:20}
+.status{font-size:12px;color:var(--muted)}
+.empty{padding:18px 0;color:var(--muted);text-align:center}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden;background:var(--panel)}
+.seg button{border:0;border-radius:0;background:none;padding:7px 14px;color:var(--muted)}
+.seg button[aria-pressed=true]{background:var(--accent);color:var(--accent-ink)}
+.foot{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:flex-end;margin-top:12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <h1>Office Pantry<small>Buy and track office stock</small></h1>
+  </header>
+  <nav class="tabs" role="tablist" id="tabs"></nav>
+  <main id="main"><div class="empty">Loading stock…</div></main>
+  <p class="status" id="status"></p>
+</div>
+
+<script>
+(function(){
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const R = v => "R " + (Math.round((v||0)*100)/100).toLocaleString("en-ZA",{minimumFractionDigits:2,maximumFractionDigits:2});
+const q = v => (Math.round((v||0)*10)/10).toLocaleString("en-ZA");
+const today = () => new Date().toISOString().slice(0,10);
+const store = { get(k,d){ try{ const v=localStorage.getItem(k); return v==null?d:v; }catch(e){ return d; } }, set(k,v){ try{ localStorage.setItem(k,v); }catch(e){} } };
+
+const CATS = ["Kitchen","Cleaning","Toilet"];
+const catOf = i => CATS.includes(i?.category)? i.category : "Kitchen";
+const parOf = i => i.parLevel!=null ? +i.parLevel : (+(i.par?.a||0))+(+(i.par?.b||0));
+let db=null, items=[], txns=[], ready={items:false,txns:false};
+let tab = store.get("tab3","stock"); if(!["stock","buy","count","log","items"].includes(tab)) tab="stock";
+let catFilter = store.get("cat","all");
+let buyLines = [{item:"",qty:"",total:""}];
+let pendingDelete = null;
+const TABS = [["stock","Stock"],["buy","Record purchase"],["count","Stock count"],["log","Log"],["items","Items"]];
+const activeItems = () => items.filter(i=>!i.archived).sort((a,b)=>CATS.indexOf(catOf(a))-CATS.indexOf(catOf(b))||a.name.localeCompare(b.name));
+const setTab = t => { tab=t; store.set("tab3",t); pendingDelete=null; };
+
+// one shared stock pool: purchases add, counts reset to the counted number
+function engine(){
+  const evs = txns.slice().sort((a,b)=> a.date<b.date?-1:a.date>b.date?1:(a.ts||0)-(b.ts||0));
+  const oh = {}, lastPrice = {}; let lastCount = null;
+  for(const ev of evs){
+    for(const l of ev.lines||[]){
+      const qty = +l.qty||0;
+      if(ev.type==="purchase"){ oh[l.item]=(oh[l.item]||0)+qty; if(qty&&+l.total) lastPrice[l.item]={unit:l.total/qty,date:ev.date}; }
+      else if(ev.type==="count"){ oh[l.item]=qty; }
+    }
+    if(ev.type==="count" && (!lastCount || ev.date>lastCount)) lastCount=ev.date;
+  }
+  const price = id => lastPrice[id]?.unit ?? (+items.find(i=>i.id===id)?.refPrice||0);
+  return {oh, price, lastCount, lastPrice};
+}
+
+function render(){
+  $("#tabs").innerHTML = TABS.map(([k,l])=>`<button role="tab" data-tab="${k}" aria-selected="${k===tab}">${l}</button>`).join("");
+  if(!ready.items||!ready.txns) return;
+  const E = engine();
+  $("#main").innerHTML = ({stock,buy,count,log,items:itemsView})[tab](E);
+}
+
+// ---------- Stock ----------
+function stock(E){
+  const rows = activeItems().filter(it=>catFilter==="all"||catOf(it)===catFilter).map(it=>{
+    const have = Math.max(0, E.oh[it.id]||0), par = parOf(it);
+    const need = par? Math.max(0, Math.ceil(par-have)) : 0;
+    const ratio = par? have/par : 1;
+    const state = !par? "none" : have<=0? "out" : ratio<=0.3? "low" : need>0? "top" : "ok";
+    return {it,have,par,need,ratio,state,cost:need*E.price(it.id)};
+  });
+  const urgent = rows.filter(r=>r.state==="out"||r.state==="low");
+  const toBuy = rows.filter(r=>r.need>0);
+  const total = toBuy.reduce((s,r)=>s+r.cost,0), urgentTotal = urgent.reduce((s,r)=>s+r.cost,0);
+  const days = E.lastCount? Math.round((new Date(today())-new Date(E.lastCount))/864e5) : null;
+  const pill = {out:'<span class="pill p-bad">Out</span>',low:'<span class="pill p-warn">Low</span>',top:'<span class="pill p-acc">Top up</span>',ok:'<span class="pill p-good">OK</span>',none:'<span class="muted small">no par</span>'};
+  const mc = {out:"var(--bad)",low:"var(--warn)",top:"var(--accent)",ok:"var(--good)",none:"var(--line)"};
+  let cat=null;
+  const body = rows.map(r=>{
+    const c = catOf(r.it); const head = c!==cat ? (cat=c, `<tr class="cat"><td colspan="6">${c}</td></tr>`) : "";
+    return head + `<tr><td>${esc(r.it.name)} <span class="muted small">${esc(r.it.unit||"")}</span></td>
+      <td class="n">${q(r.have)} <span class="meter"><i style="width:${Math.min(100,r.ratio*100)}%;background:${mc[r.state]}"></i></span></td>
+      <td class="n muted">${r.par?q(r.par):"—"}</td><td>${pill[r.state]}</td>
+      <td class="n"><b>${r.need||""}</b></td><td class="n">${r.need?R(r.cost):""}</td></tr>`;
+  }).join("");
+  let cur=null;
+  const list = toBuy.map(r=>{ const c=catOf(r.it); const h=c!==cur?(cur=c,`\n${c.toUpperCase()}\n`):""; return `${h}- ${r.need} x ${r.it.name}${r.it.unit?` (${r.it.unit})`:""}`; }).join("\n");
+  return `
+  <div class="kpis">
+    <div class="kpi"><h3>Out or low</h3><div class="v" style="color:${urgent.length?"var(--bad)":"var(--good)"}">${urgent.length}</div><div class="s">${urgent.length?`buy now · ${R(urgentTotal)}`:"nothing urgent"}</div></div>
+    <div class="kpi"><h3>Full top-up</h3><div class="v">${R(total)}</div><div class="s">${toBuy.length} items at Checkers prices</div></div>
+    <div class="kpi"><h3>Last count</h3><div class="v" style="color:${days===null||days>7?"var(--warn)":"var(--ink)"}">${days===null?"Never":days===0?"Today":days+" d ago"}</div><div class="s">${days===null||days>7?"count before you shop":"stock figures are current"}</div></div>
+  </div>
+  <div class="seg" role="group" aria-label="Category" style="margin-bottom:10px">${[["all","All"],...CATS.map(c=>[c,c])].map(([k,l])=>`<button data-cat="${k}" aria-pressed="${catFilter===k}">${l}</button>`).join("")}</div>
+  <div class="card"><div class="tbl"><table>
+    <thead><tr><th>Item</th><th class="n">On hand</th><th class="n">Par</th><th>Status</th><th class="n">Buy</th><th class="n">Cost</th></tr></thead>
+    <tbody>${body||`<tr><td colspan="6" class="empty">No items here. Add them under Items.</td></tr>`}</tbody>
+  </table></div>
+  ${toBuy.length?`<div class="foot"><button id="copyList">Copy shopping list</button><button class="primary" id="fillBuy">Record the purchase</button></div>`:""}
+  </div>
+  <textarea id="listText" hidden>${esc(`Shopping list${catFilter==="all"?"":" · "+catFilter} · ${today()}\n${list}\n\nEstimated: ${R(total)}`)}</textarea>
+  <p class="small muted"><b>Par</b> = the most you should hold. On hand = last count plus purchases since then.</p>`;
+}
+
+// ---------- Buy ----------
+function itemOptions(sel){
+  return `<option value="">Choose item…</option>` + CATS.map(c=>`<optgroup label="${c}">${activeItems().filter(i=>catOf(i)===c).map(i=>`<option value="${i.id}" ${i.id===sel?"selected":""}>${esc(i.name)}${i.unit?` (${esc(i.unit)})`:""}</option>`).join("")}</optgroup>`).join("");
+}
+function buy(E){
+  const total = buyLines.reduce((s,l)=>s+(+l.total||0),0);
+  return `<div class="card">
+  <div class="note">Copy the till slip: quantity and the <b>amount paid</b> for each line.</div>
+  <div class="row">
+    <label class="f">Date<input type="date" id="b_date" value="${today()}"></label>
+    <label class="f" style="flex:1;min-width:150px">Store<input type="text" id="b_supplier" value="Checkers"></label>
+  </div>
+  <div class="lines">${buyLines.map((l,i)=>{
+    const unit = (+l.qty && +l.total)? l.total/l.qty : 0; const lp = E.lastPrice[l.item];
+    const warn = unit && lp && unit > lp.unit*1.05 ? `<div class="small" style="grid-column:1/-1;color:var(--bad)">${R(unit)} each: more than the ${R(lp.unit)} paid on ${lp.date}.</div>` : "";
+    return `<div class="line">
+      <select id="bl_item_${i}" data-bl="${i}" data-f="item" aria-label="Item">${itemOptions(l.item)}</select>
+      <input type="number" id="bl_qty_${i}" min="0" step="any" placeholder="Qty" data-bl="${i}" data-f="qty" value="${esc(l.qty)}" aria-label="Quantity">
+      <input type="number" id="bl_total_${i}" min="0" step="0.01" placeholder="Paid R" data-bl="${i}" data-f="total" value="${esc(l.total)}" aria-label="Amount paid">
+      <button class="ghost" data-delline="${i}" aria-label="Remove line">✕</button>${warn}</div>`;}).join("")}
+  </div>
+  <div class="row"><button id="addLine">Add line</button><button id="fillList">Fill from shopping list</button><span style="flex:1"></span>
+    <b style="font-family:var(--mono)">${R(total)}</b>
+    <button class="primary" id="saveBuy">Save purchase</button></div>
+  </div>`;
+}
+
+// ---------- Count ----------
+function count(E){
+  let cat=null;
+  return `<div class="card">
+  <div class="note">Count what is on the shelves, in the cupboards and in the fridge, once a week. Leave blank anything you didn't count.</div>
+  <div class="row"><label class="f">Count date<input type="date" id="c_date" value="${today()}"></label></div>
+  <div class="tbl" style="margin-top:12px"><table><thead><tr><th>Item</th><th class="n">System says</th><th class="n">Counted</th></tr></thead><tbody>
+  ${activeItems().map(i=>{ const c=catOf(i); const head=c!==cat?(cat=c,`<tr class="cat"><td colspan="3">${c}</td></tr>`):"";
+    return head+`<tr><td>${esc(i.name)} <span class="muted small">${esc(i.unit||"")}</span></td><td class="n muted">${q(Math.max(0,E.oh[i.id]||0))}</td><td class="n"><input type="number" min="0" step="any" id="c_${i.id}" data-count="${i.id}" style="width:90px" aria-label="Counted ${esc(i.name)}"></td></tr>`;}).join("")}
+  </tbody></table></div>
+  <div class="foot"><button class="primary" id="saveCount">Save count</button></div>
+  </div>`;
+}
+
+// ---------- Log ----------
+function log(){
+  const list = txns.slice().sort((a,b)=>b.date.localeCompare(a.date)||(b.ts||0)-(a.ts||0)).slice(0,50);
+  const name = id => items.find(i=>i.id===id)?.name || "Removed item";
+  return `<div class="card">${list.length?`<div class="tbl"><table><thead><tr><th>Date</th><th>Type</th><th>Details</th><th class="n">Paid</th><th></th></tr></thead><tbody>
+  ${list.map(t=>`<tr><td class="n">${t.date}</td>
+    <td>${t.type==="purchase"?'<span class="pill p-acc">Purchase</span>':'<span class="pill p-good">Count</span>'}</td>
+    <td><div class="small">${t.type==="count"?`${(t.lines||[]).length} items counted`:(t.lines||[]).map(l=>`${q(l.qty)} × ${esc(name(l.item))}`).join(", ")}</div>${t.supplier?`<div class="small muted">${esc(t.supplier)}</div>`:""}</td>
+    <td class="n">${t.type==="purchase"?R((t.lines||[]).reduce((s,l)=>s+(+l.total||0),0)):""}</td>
+    <td><button class="ghost danger" data-del="${t.id}">${pendingDelete===t.id?"Tap again to delete":"Delete"}</button></td></tr>`).join("")}
+  </tbody></table></div>`:`<div class="empty">Nothing recorded yet.</div>`}</div>`;
+}
+
+// ---------- Items ----------
+function itemsView(E){
+  const list = items.slice().sort((a,b)=>(a.archived?1:0)-(b.archived?1:0)||CATS.indexOf(catOf(a))-CATS.indexOf(catOf(b))||a.name.localeCompare(b.name));
+  const catSel = (id,val,attrs) => `<select id="${id}" ${attrs}>${CATS.map(c=>`<option ${c===val?"selected":""}>${c}</option>`).join("")}</select>`;
+  return `<div class="card">
+  <h2>Items &amp; par levels</h2>
+  <p class="small muted">Set par to about two weeks of use. Price is used for estimates until you record a purchase.</p>
+  <div class="tbl"><table><thead><tr><th>Item</th><th>Unit</th><th>Category</th><th class="n">Par</th><th class="n">Price R</th><th></th></tr></thead><tbody>
+  ${list.map(i=>`<tr style="${i.archived?"opacity:.5":""}">
+    <td><input type="text" id="it_name_${i.id}" data-item="${i.id}" data-f="name" value="${esc(i.name)}" style="width:100%;min-width:150px"></td>
+    <td><input type="text" id="it_unit_${i.id}" data-item="${i.id}" data-f="unit" value="${esc(i.unit||"")}" style="width:110px"></td>
+    <td>${catSel("it_cat_"+i.id, catOf(i), `data-item="${i.id}" data-f="category"`)}</td>
+    <td class="n"><input type="number" min="0" id="it_par_${i.id}" data-item="${i.id}" data-f="parLevel" value="${parOf(i)||""}" style="width:70px"></td>
+    <td class="n"><input type="number" min="0" step="0.01" id="it_ref_${i.id}" data-item="${i.id}" data-f="refPrice" value="${i.refPrice??""}" style="width:85px"></td>
+    <td><button class="ghost" data-archive="${i.id}">${i.archived?"Restore":"Remove"}</button></td></tr>`).join("")}
+  </tbody></table></div>
+  <div class="row" style="margin-top:14px;border-top:1px solid var(--line);padding-top:14px">
+    <label class="f" style="flex:1;min-width:150px">New item<input type="text" id="n_name" placeholder="e.g. Toilet cleaner"></label>
+    <label class="f">Unit<input type="text" id="n_unit" placeholder="e.g. 750ml" style="width:110px"></label>
+    <label class="f">Category${catSel("n_cat","Kitchen","")}</label>
+    <label class="f">Par<input type="number" id="n_par" min="0" style="width:70px"></label>
+    <label class="f">Price R<input type="number" id="n_price" min="0" step="0.01" style="width:90px"></label>
+    <button class="primary" id="addItem">Add item</button>
+  </div></div>`;
+}
+
+// ---------- writes ----------
+function toast(m){ const t=document.createElement("div"); t.className="toast"; t.textContent=m; document.body.appendChild(t); setTimeout(()=>t.remove(),2200); }
+function fail(e){ toast(e?.code==="quota_exceeded"?"Storage full: delete old entries in Log":"Couldn't save. Check your connection and try again."); console.error(e); }
+async function addTxn(doc){ if(!db){ toast("Saving isn't available in this view"); return false; } try{ await db.collection("txns").add({...doc,office:"main",ts:Date.now()}); return true; }catch(e){ fail(e); return false; } }
+const timers={}; const later=(k,fn)=>{ clearTimeout(timers[k]); timers[k]=setTimeout(fn,600); };
+function shoppingLines(){
+  const E=engine();
+  return activeItems().filter(it=>catFilter==="all"||catOf(it)===catFilter).map(it=>({it,need:Math.max(0,Math.ceil(parOf(it)-Math.max(0,E.oh[it.id]||0)))})).filter(x=>x.need>0).map(x=>({item:x.it.id,qty:String(x.need),total:""}));
+}
+
+document.addEventListener("click", async e=>{
+  const t=e.target.closest("button"); if(!t) return;
+  if(t.dataset.tab){ setTab(t.dataset.tab); render(); window.scrollTo(0,0); return; }
+  if(t.dataset.cat){ catFilter=t.dataset.cat; store.set("cat",catFilter); render(); return; }
+  if(t.id==="addLine"){ buyLines.push({item:"",qty:"",total:""}); render(); return; }
+  if(t.dataset.delline!=null){ buyLines.splice(+t.dataset.delline,1); if(!buyLines.length) buyLines=[{item:"",qty:"",total:""}]; render(); return; }
+  if(t.id==="fillList"||t.id==="fillBuy"){
+    const l=shoppingLines(); if(!l.length){ toast("Nothing to buy — everything is at par"); return; }
+    buyLines=l; setTab("buy"); render(); window.scrollTo(0,0); toast("Filled. Enter what you paid per line"); return;
+  }
+  if(t.id==="copyList"){
+    try{ await navigator.clipboard.writeText($("#listText").value); toast("Shopping list copied"); }catch(err){ toast("Copy blocked by the browser"); }
+    return;
+  }
+  if(t.id==="saveBuy"){
+    const lines=buyLines.filter(l=>l.item&&+l.qty>0).map(l=>({item:l.item,qty:+l.qty,total:+l.total||0}));
+    if(!lines.length){ toast("Add at least one item with a quantity"); return; }
+    if(lines.some(l=>!l.total)){ toast("Every line needs the amount paid"); return; }
+    t.disabled=true;
+    if(await addTxn({type:"purchase",date:$("#b_date").value||today(),supplier:$("#b_supplier").value.trim(),lines})){ buyLines=[{item:"",qty:"",total:""}]; toast("Purchase saved · stock updated"); setTab("stock"); }
+    t.disabled=false; render(); return;
+  }
+  if(t.id==="saveCount"){
+    const lines=[...document.querySelectorAll("[data-count]")].filter(i=>i.value!=="").map(i=>({item:i.dataset.count,qty:+i.value}));
+    if(!lines.length){ toast("Enter at least one counted quantity"); return; }
+    t.disabled=true;
+    if(await addTxn({type:"count",date:$("#c_date").value||today(),lines})){ toast(`Count saved · ${lines.length} items`); setTab("stock"); }
+    t.disabled=false; render(); return;
+  }
+  if(t.dataset.del){
+    if(pendingDelete!==t.dataset.del){ pendingDelete=t.dataset.del; render(); return; }
+    pendingDelete=null; try{ await db.doc("txns/"+t.dataset.del).delete(); toast("Deleted"); }catch(err){ fail(err); } return;
+  }
+  if(t.dataset.archive){ const it=items.find(i=>i.id===t.dataset.archive); try{ await db.doc("items/"+it.id).update({archived:!it.archived}); }catch(err){ fail(err); } return; }
+  if(t.id==="addItem"){
+    const name=$("#n_name").value.trim(); if(!name){ toast("Give the item a name"); return; }
+    try{ await db.collection("items").add({name,unit:$("#n_unit").value.trim(),category:$("#n_cat").value,parLevel:+$("#n_par").value||0,refPrice:+$("#n_price").value||0,archived:false}); toast("Item added"); }catch(err){ fail(err); }
+    return;
+  }
+});
+
+document.addEventListener("input", e=>{
+  const el=e.target;
+  if(el.dataset.bl!=null){
+    buyLines[+el.dataset.bl][el.dataset.f]=el.value;
+    later("bl",()=>{ const a=document.activeElement, id=a?.id, pos=a?.selectionStart; render(); const n=id&&document.getElementById(id); if(n){ n.focus(); try{ if(pos!=null) n.setSelectionRange(pos,pos); }catch(_){} } });
+    return;
+  }
+  if(el.dataset.item){
+    const id=el.dataset.item, f=el.dataset.f;
+    const patch = (f==="refPrice"||f==="parLevel")? {[f]:+el.value||0} : {[f]:el.value};
+    later("it"+id+f, async()=>{ try{ await db.doc("items/"+id).update(patch); }catch(err){ fail(err); } });
+  }
+});
+
+// ---------- boot ----------
+render();
+(async()=>{
+  db = window.claude ? await window.claude.use("db") : null;
+  if(!db){ $("#main").innerHTML=`<div class="empty">Stock data isn't available in this view. Open the page from Claude.</div>`; return; }
+  const err = e => { $("#status").textContent="Live updates paused. Reload the page to reconnect."; console.error(e); };
+  const busy = () => { const a=document.activeElement; return a && (a.dataset?.item||a.dataset?.count||a.dataset?.bl!=null||/^(n_|b_|c_date)/.test(a.id||"")); };
+  db.collection("items").onSnapshot(s=>{ items=s.docs.map(d=>({id:d.id,...d.data()})); ready.items=true; if(!busy()) render(); }, err);
+  db.collection("txns").onSnapshot(s=>{ txns=s.docs.map(d=>({id:d.id,...d.data()})); ready.txns=true; $("#status").textContent=`${txns.length} records · live`; if(!busy()) render(); }, err);
+})();
+})();
+</script>
+</body>
+</html>
